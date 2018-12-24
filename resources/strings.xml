@@ -1,0 +1,33 @@
+<!-- -*- mode:xml; tab-width:2; c-basic-offset:2; intent-tabs-mode:nil; -*- ex: set tabstop=2 expandtab: -->
+<strings>
+  <string id="AppName">TOTP</string>
+  <string id="AppVersion">1.0.20181224a</string>
+  <!-- Properties -->
+  <string id="titleVersion">Version</string>
+  <string id="titleLicense">License</string>
+  <string id="titleAuthor">Author</string>
+  <!-- Menu (settings) -->
+  <string id="titleSettings">Settings</string>
+  <!-- Menu (accounts) -->
+  <string id="titleSettingsAccounts">Accounts</string>
+  <string id="titleAccountsNew">New</string>
+  <string id="titleAccountsEdit">Edit</string>
+  <string id="titleAccountsSave">Save</string>
+  <string id="titleAccountsLoad">Load</string>
+  <string id="titleAccountsDelete">Delete</string>
+  <!-- Menu (account) -->
+  <string id="titleSettingsAccount">Account</string>
+  <string id="titleAccountName">Name</string>
+  <string id="valueAccountNameNew">(new)</string>
+  <string id="titleAccountKey">Key</string>
+  <string id="titleAccountKey2">Key (cont'd)</string>
+  <string id="titleAccountEncoding">Encoding</string>
+  <string id="titleAccountDigits">Digits</string>
+  <string id="titleAccountHash">Hash</string>
+  <string id="titleAccountT0">T0</string>
+  <string id="titleAccountTX">TX</string>
+  <!-- Menu (about) -->
+  <string id="titleSettingsAbout">About</string>
+  <!-- Layouts -->
+  <string id="labelAccountSelect">(select account)</string>
+</strings>

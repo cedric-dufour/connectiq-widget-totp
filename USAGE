@@ -1,0 +1,88 @@
+TOTP (Garmin ConnectIQ) Widget
+==============================
+Usage instructions
+
+
+   !!! WARNING !!! DISCLAIMER !!! WARNING !!! DISCLAIMER !!! WARNING !!!
+
+IF YOUR DEVICE IS STOLEN, LOST OR JUST THROWN AWAY, CONSIDER YOUR TOTP TOKEN(S)
+COMPROMISED AND PROCEED TO REPLACE THEM (USING EACH ACCOUNT'S AD-HOC PROCEDURE).
+
+   !!! WARNING !!! DISCLAIMER !!! WARNING !!! DISCLAIMER !!! WARNING !!!
+
+
+Global View
+-----------
+
+TOTP displays the current Time-based One-Time Password (TOTP) for the account
+chosen using the SELECT button.
+
+A progress bar below the authentication code indicates its validity. The code
+will be automatically be refreshed once it has expired.
+
+
+Settings
+--------
+
+Enter the Settings menu by pressing the MENU button (long-pressing the UP button),
+where you can add and configure up to 100 accounts:
+
+* Accounts
+  - New:
+    create a new account from scratch (you will be taken to the Edit menu)
+  > Edit:
+    edit the currently active account (do not forget to Save afterwards)
+    - Name:
+      account name
+    - Key:
+      TOTP secret key (up to 31 characters)
+    - Key (cont'd)
+      TOTP secret key (additional 31 characters)
+    - Encoding
+      TOTP secret key encoding (default and most common: Base32)
+    - Digits
+      TOTP digits to display (default and most common: 6)
+    - Hash
+      TOTP hash algorithm (default and most common: SHA1)
+    - T0
+      TOTP time base (default and most common: 0)
+    - TX
+      TOTP time step (default and most common: 30)
+  - Load:
+    load the currently active account from the accounts memory
+  - Save:
+    save the currently active account to the accounts memory
+  - Delete:
+    delete an account from the accounts memory
+
+NOTE: Existing secret keys remain hidden and can only be overwritten, not
+modified (also see the Security section below).
+
+Also, the Connect IQ's text editor is limited to 31 characters; in order
+to circumvent this limit:
+ - do not include white spaces (which are used only for reading convenience)
+ - for keys longer than 31 characters, use the Key (cont'd) setting to append
+   the 32nd and following characters (e.g. Google Two-Factor Authentication)
+
+
+Security
+--------
+
+First of all, as soon as an unauthorized party gets hold of your device, TOTP
+codes are readily available as long as the device work.
+
+Beside that, TOTP secret keys, along other accounts parameters, are stored in
+Connect IQ's App.Storage. Given users are never asked for a password to unlock
+any encryption that may - or may not - exist on Garmin devices, data in the
+App.Storage are - ultimately - vulnerable to unauthorized access/recovery, even
+if the App.Storage appears to be "mangled" in some sort.
+(I very much doubt Garmin devices have a Trusted Platform Module or equivalent)
+
+Bottom-line...
+
+IF YOUR DEVICE IS STOLEN, LOST OR JUST THROWN AWAY, CONSIDER YOUR TOTP TOKEN(S)
+COMPROMISED AND PROCEED TO REPLACE THEM (USING EACH ACCOUNT'S AD-HOC PROCEDURE).
+
+If you plan to dispose of your device, the only guaranteed way of making sure
+the App.Storage data - and TOTP secret keys - are not recoverable is to destroy
+the device (memory)! Factory-resetting the device does NOT suffice!
