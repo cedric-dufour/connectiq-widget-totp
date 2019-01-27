@@ -75,10 +75,10 @@ module LangUtils {
     for (var i=0; i<ac.size(); i++) {
       var c = ac[i].toNumber();
       if(c >= 48 and c <= 57) {
-        cb = 16*cb + (c - 48);  // Hex: "0" to "9" (=> 0 to 9)
+        cb = (cb << 4) | (c - 48);  // Hex: "0" to "9" (=> 0 to 9)
       }
       else if(c >= 65 and c <= 70) {
-        cb = 16*cb + (c - 55);  // Hex: "A" to "F" (=> 10 to 15)
+        cb = (cb << 4) | (c - 55);  // Hex: "A" to "F" (=> 10 to 15)
       }
       else {
         continue;  // Hex: invalid character
@@ -91,7 +91,7 @@ module LangUtils {
       e = (e + 1) % 16;  // Hex: 16 elmts (CB)
     }
     if(e) {  // pad the missing elements
-      for(var i=e; i<16; i++) { cb *= 16; }
+      for(var i=e; i<16; i++) { cb = cb << 4; }
       ba.addAll(LangUtils.ByteArray_fromLong(cb));  // ByteArray: 8 elmts (CB)
     }
     return ba.slice(0, bits/8);
@@ -110,10 +110,10 @@ module LangUtils {
     for (var i=0; i<ac.size(); i++) {
       var c = ac[i].toNumber();
       if(c >= 50 and c <= 55) {
-        cb = 32*cb + (c - 24);  // Base32: "2" to "7" (=> 26 to 31)
+        cb = (cb << 5) | (c - 24);  // Base32: "2" to "7" (=> 26 to 31)
       }
       else if(c >= 65 and c <= 90) {
-        cb = 32*cb + (c - 65);  // Base32: "A" to "Z" (=> 0 to 25)
+        cb = (cb << 5) | (c - 65);  // Base32: "A" to "Z" (=> 0 to 25)
       }
       else {
         continue;  // Base32: invalid character
@@ -126,7 +126,7 @@ module LangUtils {
       e = (e + 1) % 8;  // Base32: 8 elmts (CB)
     }
     if(e) {  // pad the missing elements
-      for(var i=e; i<8; i++) { cb *= 32; }
+      for(var i=e; i<8; i++) { cb = cb << 5; }
       ba.addAll(LangUtils.ByteArray_fromLong(cb).slice(3,8));  // ByteArray: 5 elmts (CB)
     }
     return ba.slice(0, bits/8);
@@ -145,19 +145,19 @@ module LangUtils {
     for (var i=0; i<ac.size(); i++) {
       var c = ac[i].toNumber();
       if(c == 45) {
-        cb = 64*cb + 62;  // Base64: "-" (=> 62)
+        cb = (cb << 6) | 62;  // Base64: "-" (=> 62)
       }
       else if(c == 95) {
-        cb = 64*cb + 63;  // Base64: "_" (=> 63)
+        cb = (cb << 6) | 63;  // Base64: "_" (=> 63)
       }
       else if(c >= 48 and c <= 57) {
-        cb = 64*cb + (c + 4);  // Base64: "0" to "9" (=> 52 to 61)
+        cb = (cb << 6) | (c + 4);  // Base64: "0" to "9" (=> 52 to 61)
       }
       else if(c >= 65 and c <= 90) {
-        cb = 64*cb + (c - 65);  // Base64: "A" to "Z" (=> 0 to 25)
+        cb = (cb << 6) | (c - 65);  // Base64: "A" to "Z" (=> 0 to 25)
       }
       else if(c >= 97 and c <= 122) {
-        cb = 64*cb + (c - 71);  // Base64: "a" to "z" (=> 26 to 51)
+        cb = (cb << 6) | (c - 71);  // Base64: "a" to "z" (=> 26 to 51)
       }
       else {
         continue;  // Base64: invalid character
@@ -170,7 +170,7 @@ module LangUtils {
       e = (e + 1) % 8;  // Base64: 8 elmts (CB)
     }
     if(e) {  // pad the missing elements
-      for(var i=e; i<8; i++) { cb *= 64; }
+      for(var i=e; i<8; i++) { cb = cb << 6; }
       ba.addAll(LangUtils.ByteArray_fromLong(cb).slice(2,8));  // ByteArray: 6 elmts (CB)
     }
     return ba.slice(0, bits/8);
