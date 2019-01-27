@@ -203,7 +203,7 @@ class TOTP_ViewDelegate extends Ui.BehaviorDelegate {
     var i = $.TOTP_iCurrentAccount != null ? $.TOTP_iCurrentAccount+1 : 0;
     for(var n=0; n<$.TOTP_STORAGE_SLOTS; n++) {
       var s = i.format("%02d");
-      var dictAccount = App.Storage.getValue("ACT"+s);
+      var dictAccount = App.Storage.getValue(Lang.format("ACT$1$", [s]));
       if(dictAccount != null) {
         $.TOTP_iCurrentAccount = i;
         $.TOTP_dictCurrentAccount = dictAccount;

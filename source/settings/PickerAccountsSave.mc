@@ -33,7 +33,7 @@ class PickerAccountsSave extends Ui.Picker {
     for(var n=0; n<$.TOTP_STORAGE_SLOTS; n++) {
       aiMemoryKeys[n] = n;
       var s = n.format("%02d");
-      var dictAccount = App.Storage.getValue("ACT"+s);
+      var dictAccount = App.Storage.getValue(Lang.format("ACT$1$", [s]));
       if(dictAccount != null) {
         asMemoryValues[n] = Lang.format("[$1$]\n$2$", [s, dictAccount["ID"]]);
       }
@@ -67,7 +67,7 @@ class PickerAccountsSaveDelegate extends Ui.PickerDelegate {
     if(dictAccount != null) {
       // WARNING: We MUST store a new (different) dictionary instance (deep copy)!
       var s = _amValues[0].format("%02d");
-      App.Storage.setValue("ACT"+s, LangUtils.copy(dictAccount));
+      App.Storage.setValue(Lang.format("ACT$1$", [s]), LangUtils.copy(dictAccount));
     }
 
     // Exit

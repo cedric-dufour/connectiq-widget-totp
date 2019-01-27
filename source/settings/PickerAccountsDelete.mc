@@ -33,7 +33,7 @@ class PickerAccountsDelete extends Ui.Picker {
     var iMemoryUsed = 0;
     for(var n=0; n<$.TOTP_STORAGE_SLOTS; n++) {
       var s = n.format("%02d");
-      var dictAccount = App.Storage.getValue("ACT"+s);
+      var dictAccount = App.Storage.getValue(Lang.format("ACT$1$", [s]));
       if(dictAccount != null) {
         aiMemoryKeys[iMemoryUsed] = n;
         asMemoryValues[iMemoryUsed] = Lang.format("[$1$]\n$2$", [s, dictAccount["ID"]]);
@@ -73,7 +73,7 @@ class PickerAccountsDeleteDelegate extends Ui.PickerDelegate {
     // Delete account
     if(_amValues[0] != null) {
       var s = _amValues[0].format("%02d");
-      App.Storage.deleteValue("ACT"+s);
+      App.Storage.deleteValue(Lang.format("ACT$1$", [s]));
     }
 
     // Exit
