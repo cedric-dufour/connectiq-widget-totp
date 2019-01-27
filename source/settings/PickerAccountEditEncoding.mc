@@ -31,7 +31,7 @@ class PickerAccountEditEncoding extends Ui.Picker {
     var iValue = $.TOTP_dictCurrentAccount != null ? $.TOTP_dictCurrentAccount["E"] : TOTP_Algorithms.ENCODING_BASE32;
     
     // Initialize picker
-    var oFactory = new PickerFactoryDictionary([TOTP_Algorithms.ENCODING_HEX, TOTP_Algorithms.ENCODING_BASE32, TOTP_Algorithms.ENCODING_BASE64], ["Hex", "Base32", "Base64"], { :font => Gfx.FONT_TINY });
+    var oFactory = new PickerFactoryDictionary([TOTP_Algorithms.ENCODING_HEX, TOTP_Algorithms.ENCODING_BASE32, TOTP_Algorithms.ENCODING_BASE64], [Ui.loadResource(Rez.Strings.valueAccountEncodingHex), Ui.loadResource(Rez.Strings.valueAccountEncodingBase32), Ui.loadResource(Rez.Strings.valueAccountEncodingBase64)], { :font => Gfx.FONT_TINY });
     var iIndex = oFactory.indexOfKey(iValue);
     if(iIndex == null) {
       iIndex = TOTP_Algorithms.ENCODING_BASE32;

@@ -116,6 +116,31 @@ class TOTP_App extends App.AppBase {
     return [new TOTP_View(), new TOTP_ViewDelegate()];
   }
 
+  function onSettingsChanged() {
+    //Sys.println("DEBUG: TOTP_App.onSettingsChanged()");
+
+    // Import account
+    if (App.Properties.getValue("importAccountName").length() > 0 and App.Properties.getValue("importAccountKey").length() > 0) {
+      // ... store account
+      var dictAccount = {
+        "ID" => App.Properties.getValue("importAccountName"),
+        "K" => App.Properties.getValue("importAccountKey"),
+        "E" => App.Properties.getValue("importAccountEncoding").toNumber(),
+        "D" => App.Properties.getValue("importAccountDigits").toNumber(),
+        "H" => App.Properties.getValue("importAccountHash").toNumber(),
+        "T0" => App.Properties.getValue("importAccountT0").toLong(),
+        "TX" => App.Properties.getValue("importAccountTX").toNumber()
+      };
+      var s = App.Properties.getValue("importAccountSlot").format("%02d");
+      App.Storage.setValue(Lang.format("ACT$1$", [s]), dictAccount);
+
+      // ... reset import properties/settings
+      App.Properties.setValue("importAccountSlot", 0);
+      App.Properties.setValue("importAccountName", "");
+      App.Properties.setValue("importAccountKey", "");
+    }
+  }
+
 
   //
   // FUNCTIONS: self

@@ -17,13 +17,19 @@
   <string id="titleAccountsDelete">Delete</string>
   <!-- Menu (account) -->
   <string id="titleSettingsAccount">Account</string>
+  <string id="titleAccountSlot">Slot</string>
   <string id="titleAccountName">Name</string>
   <string id="valueAccountNameNew">(new)</string>
   <string id="titleAccountKey">Key</string>
   <string id="titleAccountKey2">Key (cont'd)</string>
   <string id="titleAccountEncoding">Encoding</string>
+  <string id="valueAccountEncodingHex">Hex</string>
+  <string id="valueAccountEncodingBase32">Base32</string>
+  <string id="valueAccountEncodingBase64">Base64</string>
   <string id="titleAccountDigits">Digits</string>
   <string id="titleAccountHash">Hash</string>
+  <string id="valueAccountHashSHA1">SHA1</string>
+  <string id="valueAccountHashSHA256">SHA256</string>
   <string id="titleAccountT0">T0</string>
   <string id="titleAccountTX">TX</string>
   <!-- Menu (about) -->

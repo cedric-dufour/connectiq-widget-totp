@@ -64,6 +64,15 @@ to circumvent this limit:
  - for keys longer than 31 characters, use the Key (cont'd) setting to append
    the 32nd and following characters (e.g. Google Two-Factor Authentication)
 
+Accounts can also be created/updated via Garmin Connect Mobile (GCM). In
+addition to the account parameters, you will have to specify the memory slot
+number, which shall be overwritten once you confirm the settings change in GCM.
+This method allows in particular to specify - easily - a TOTP secret key up
+to 256 characters.
+WARNING: The widget MUST be and remain active on the device while editing the
+settings in GCM! You can prevent the widget from automatically closing (after
+Connect IQ's enforced timeout) by entering its Settings menu (see above).
+
 
 Security
 --------

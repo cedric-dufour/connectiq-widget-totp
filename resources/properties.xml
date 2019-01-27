@@ -1,0 +1,12 @@
+<!-- -*- mode:xml; tab-width:2; c-basic-offset:2; intent-tabs-mode:nil; -*- ex: set tabstop=2 expandtab: -->
+<properties>
+  <!-- Import account (via settings) -->
+  <property id="importAccountSlot" type="number">0</property>
+  <property id="importAccountName" type="string"></property>
+  <property id="importAccountKey" type="string"></property>
+  <property id="importAccountEncoding" type="number">1</property>
+  <property id="importAccountDigits" type="number">6</property>
+  <property id="importAccountHash" type="number">0</property>
+  <property id="importAccountT0" type="number">0</property>
+  <property id="importAccountTX" type="number">30</property>
+</properties>

@@ -31,7 +31,7 @@ class PickerAccountEditHash extends Ui.Picker {
     var iValue = $.TOTP_dictCurrentAccount != null ? $.TOTP_dictCurrentAccount["H"] : Crypto.HASH_SHA1;
     
     // Initialize picker
-    var oFactory = new PickerFactoryDictionary([Crypto.HASH_SHA1, Crypto.HASH_SHA256], ["SHA1", "SHA256"], { :font => Gfx.FONT_TINY });
+    var oFactory = new PickerFactoryDictionary([Crypto.HASH_SHA1, Crypto.HASH_SHA256], [Ui.loadResource(Rez.Strings.valueAccountHashSHA1), Ui.loadResource(Rez.Strings.valueAccountHashSHA256)], { :font => Gfx.FONT_TINY });
     var iIndex = oFactory.indexOfKey(iValue);
     if(iIndex == null) {
       iIndex = Crypto.HASH_SHA1;

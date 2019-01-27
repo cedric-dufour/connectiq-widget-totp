@@ -1,0 +1,35 @@
+<!-- -*- mode:xml; tab-width:2; c-basic-offset:2; intent-tabs-mode:nil; -*- ex: set tabstop=2 expandtab: -->
+<settings>
+  <!-- Import account -->
+  <setting propertyKey="@Properties.importAccountSlot" title="@Strings.titleAccountSlot">
+    <settingConfig type="numeric" min="0" max="99" />
+  </setting>
+  <setting propertyKey="@Properties.importAccountName" title="@Strings.titleAccountName">
+    <settingConfig type="alphaNumeric" required="true" maxLength="16" />
+  </setting>
+  <setting propertyKey="@Properties.importAccountKey" title="@Strings.titleAccountKey">
+    <settingConfig type="alphaNumeric" required="true" maxLength="256" />
+  </setting>
+  <setting propertyKey="@Properties.importAccountEncoding" title="@Strings.titleAccountEncoding">
+    <settingConfig type="list">
+      <listEntry value="0">@Strings.valueAccountEncodingHex</listEntry>
+      <listEntry value="1">@Strings.valueAccountEncodingBase32</listEntry>
+      <listEntry value="2">@Strings.valueAccountEncodingBase64</listEntry>
+    </settingConfig>
+  </setting>
+  <setting propertyKey="@Properties.importAccountDigits" title="@Strings.titleAccountDigits">
+    <settingConfig type="numeric" min="6" max="10" />
+  </setting>
+  <setting propertyKey="@Properties.importAccountHash" title="@Strings.titleAccountHash">
+    <settingConfig type="list">
+      <listEntry value="0">@Strings.valueAccountHashSHA1</listEntry>
+      <listEntry value="1">@Strings.valueAccountHashSHA256</listEntry>
+    </settingConfig>
+  </setting>
+  <setting propertyKey="@Properties.importAccountT0" title="@Strings.titleAccountT0">
+    <settingConfig type="numeric" min="0" />
+  </setting>
+  <setting propertyKey="@Properties.importAccountTX" title="@Strings.titleAccountTX">
+    <settingConfig type="numeric" min="10" max="600" />
+  </setting>
+</settings>
