@@ -1,3 +1,7 @@
+* 1.0.20190127c:
+  - FIX: memory slot 0 could not be reached from memory slot 99
+  - NEW: allow accounts to be created via Garmin Connect Mobile (GCM)
+
 * 1.0.20181224a:
   - Post Tenebras Lux (and Merry Christmas)
 
