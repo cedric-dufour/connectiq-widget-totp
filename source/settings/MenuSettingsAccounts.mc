@@ -50,8 +50,8 @@ class MenuSettingsAccountsDelegate extends Ui.MenuInputDelegate {
   function onMenuItem(item) {
     if (item == :menuAccountsNew) {
       //Sys.println("DEBUG: MenuSettingsAccountsDelegate.onMenuItem(:menuAccountsNew)");
-      $.TOTP_dictCurrentAccount = null;
-      $.TOTP_arrCurrentCode = null;
+      $.dictMyCurrentTotpAccount = null;
+      $.arrMyCurrentTotpCode = null;
       Ui.pushView(new MenuAccountsEdit(), new MenuAccountsEditDelegate(), Ui.SLIDE_IMMEDIATE);
     }
     else if (item == :menuAccountsEdit) {

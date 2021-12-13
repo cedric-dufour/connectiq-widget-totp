@@ -28,11 +28,11 @@ class PickerAccountsLoad extends Ui.Picker {
 
   function initialize() {
     // Accounts memory
-    var aiMemoryKeys = new [$.TOTP_STORAGE_SLOTS];
-    var asMemoryValues = new [$.TOTP_STORAGE_SLOTS];
-    var afMemoryDistances = new [$.TOTP_STORAGE_SLOTS];
+    var aiMemoryKeys = new [$.MY_STORAGE_SLOTS];
+    var asMemoryValues = new [$.MY_STORAGE_SLOTS];
+    var afMemoryDistances = new [$.MY_STORAGE_SLOTS];
     var iMemoryUsed = 0;
-    for(var n=0; n<$.TOTP_STORAGE_SLOTS; n++) {
+    for(var n=0; n<$.MY_STORAGE_SLOTS; n++) {
       var s = n.format("%02d");
       var dictAccount = App.Storage.getValue(Lang.format("ACT$1$", [s]));
       if(dictAccount != null) {
@@ -77,8 +77,8 @@ class PickerAccountsLoadDelegate extends Ui.PickerDelegate {
       var s = _amValues[0].format("%02d");
       var dictAccount = App.Storage.getValue(Lang.format("ACT$1$", [s]));
       // WARNING: We MUST store a new (different) dictionary instance (deep copy)!
-      $.TOTP_dictCurrentAccount = LangUtils.copy(dictAccount);
-      $.TOTP_arrCurrentCode = null;
+      $.dictMyCurrentTotpAccount = LangUtils.copy(dictAccount);
+      $.arrMyCurrentTotpCode = null;
     }
 
     // Exit

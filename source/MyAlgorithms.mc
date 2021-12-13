@@ -36,8 +36,8 @@ using Toybox.System as Sys;
 // MODULE
 //
 
-module TOTP_Algorithms {
-  
+module MyAlgorithms {
+
   //
   // CONSTANTS
   //
@@ -69,7 +69,7 @@ module TOTP_Algorithms {
 
     // F***! We must do our own implementation (Why, Garmin? Why?!?)
     var oHASH;
-  
+
     // ... key size
     if(_baK.size() > HMAC_BLOCKSIZE) {
       oHASH = new Crypto.Hash({ :algorithm => _iH });
@@ -85,7 +85,7 @@ module TOTP_Algorithms {
     for (var i=_baK.size(); i<HMAC_BLOCKSIZE; i++) {
       baIPad[i] = HMAC_IPAD;  // 0 XOR ipad
     }
-    
+
     // ... step (3)
     baIPad.addAll(_baM);
 
@@ -102,21 +102,21 @@ module TOTP_Algorithms {
     for (var i=_baK.size(); i<HMAC_BLOCKSIZE; i++) {
       baOPad[i] = HMAC_OPAD;  // 0 XOR opad
     }
-    
+
     // ... step (6)
     baOPad.addAll(baIPad);
-    
+
     // ... step (7)
     oHASH = new Crypto.Hash({ :algorithm => _iH });
     oHASH.update(baOPad);
     return oHASH.digest();
   }
-  
+
   function HOTP_Code(_iD, _baK, _baC, _iH) {
     // (RFC4226, §5.3)
-    
+
     // HMAC
-    var baHMAC = TOTP_Algorithms.HMAC(_baK, _baC, _iH);
+    var baHMAC = MyAlgorithms.HMAC(_baK, _baC, _iH);
 
     // Dynamic Truncation
 
@@ -144,7 +144,7 @@ module TOTP_Algorithms {
 
     // ... as 64-bit (long) integer
     var lTc = ( (_lT - _lT0) / _iTX ).toLong();
-    
+
     // ... as 8-byte array
     var baTc = LangUtils.ByteArray_fromLong(lTc);
 
@@ -157,17 +157,17 @@ module TOTP_Algorithms {
 
   function TOTP_Code(_iD, _baK, _lT, _lT0, _iTX, _iH) {
     // Code (HOTP with C=Tc)
-    return HOTP_Code(_iD, _baK, TOTP_Algorithms.TOTP_Counter(_lT, _lT0, _iTX)[0], _iH);
+    return HOTP_Code(_iD, _baK, MyAlgorithms.TOTP_Counter(_lT, _lT0, _iTX)[0], _iH);
   }
 
   function ByteArray_fromEncoding(_s, _iE) {
-    if(_iE == TOTP_Algorithms.ENCODING_HEX) {
+    if(_iE == MyAlgorithms.ENCODING_HEX) {
       return LangUtils.ByteArray_fromHex(_s);
     }
-    else if(_iE == TOTP_Algorithms.ENCODING_BASE32) {
+    else if(_iE == MyAlgorithms.ENCODING_BASE32) {
       return LangUtils.ByteArray_fromBase32(_s);
     }
-    else if(_iE == TOTP_Algorithms.ENCODING_BASE64) {
+    else if(_iE == MyAlgorithms.ENCODING_BASE64) {
       return LangUtils.ByteArray_fromBase64(_s);
     }
     return []b;  // WTF!?!

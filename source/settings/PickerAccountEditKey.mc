@@ -45,17 +45,17 @@ class PickerAccountEditKeyDelegate extends Ui.TextPickerDelegate {
 
   function onTextEntered(_sText, _bChanged) {
     // Update/create account (dictionary)
-    var dictAccount = $.TOTP_dictCurrentAccount;
+    var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
       dictAccount["K"] = _sText;
     }
     else {
-      dictAccount = { "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew), "K" => _sText, "E" => TOTP_Algorithms.ENCODING_BASE32, "D" => 6, "H" => Crypto.HASH_SHA1, "T0" => 0l, "TX" => 30 };
+      dictAccount = { "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew), "K" => _sText, "E" => MyAlgorithms.ENCODING_BASE32, "D" => 6, "H" => Crypto.HASH_SHA1, "T0" => 0l, "TX" => 30 };
     }
 
     // Set account and exit
-    $.TOTP_dictCurrentAccount = dictAccount;
-    $.TOTP_arrCurrentCode = null;
+    $.dictMyCurrentTotpAccount = dictAccount;
+    $.arrMyCurrentTotpCode = null;
   }
 
   function onCancel() {

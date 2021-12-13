@@ -28,13 +28,13 @@ class PickerAccountEditEncoding extends Ui.Picker {
 
   function initialize() {
     // Get value
-    var iValue = $.TOTP_dictCurrentAccount != null ? $.TOTP_dictCurrentAccount["E"] : TOTP_Algorithms.ENCODING_BASE32;
-    
+    var iValue = $.dictMyCurrentTotpAccount != null ? $.dictMyCurrentTotpAccount["E"] : MyAlgorithms.ENCODING_BASE32;
+
     // Initialize picker
-    var oFactory = new PickerFactoryDictionary([TOTP_Algorithms.ENCODING_HEX, TOTP_Algorithms.ENCODING_BASE32, TOTP_Algorithms.ENCODING_BASE64], [Ui.loadResource(Rez.Strings.valueAccountEncodingHex), Ui.loadResource(Rez.Strings.valueAccountEncodingBase32), Ui.loadResource(Rez.Strings.valueAccountEncodingBase64)], { :font => Gfx.FONT_TINY });
+    var oFactory = new PickerFactoryDictionary([MyAlgorithms.ENCODING_HEX, MyAlgorithms.ENCODING_BASE32, MyAlgorithms.ENCODING_BASE64], [Ui.loadResource(Rez.Strings.valueAccountEncodingHex), Ui.loadResource(Rez.Strings.valueAccountEncodingBase32), Ui.loadResource(Rez.Strings.valueAccountEncodingBase64)], { :font => Gfx.FONT_TINY });
     var iIndex = oFactory.indexOfKey(iValue);
     if(iIndex == null) {
-      iIndex = TOTP_Algorithms.ENCODING_BASE32;
+      iIndex = MyAlgorithms.ENCODING_BASE32;
     }
     Picker.initialize({
         :title => new Ui.Text({ :text => Ui.loadResource(Rez.Strings.titleAccountEncoding), :font => Gfx.FONT_TINY, :locX=>Ui.LAYOUT_HALIGN_CENTER, :locY=>Ui.LAYOUT_VALIGN_BOTTOM, :color => Gfx.COLOR_BLUE }),
@@ -57,7 +57,7 @@ class PickerAccountEditEncodingDelegate extends Ui.PickerDelegate {
 
   function onAccept(_amValues) {
     // Update/create account (dictionary)
-    var dictAccount = $.TOTP_dictCurrentAccount;
+    var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
       dictAccount["E"] = _amValues[0];
     }
@@ -66,8 +66,8 @@ class PickerAccountEditEncodingDelegate extends Ui.PickerDelegate {
     }
 
     // Set account and exit
-    $.TOTP_dictCurrentAccount = dictAccount;
-    $.TOTP_arrCurrentCode = null;
+    $.dictMyCurrentTotpAccount = dictAccount;
+    $.arrMyCurrentTotpCode = null;
     Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
 

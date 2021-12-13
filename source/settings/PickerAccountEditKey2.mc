@@ -45,7 +45,7 @@ class PickerAccountEditKey2Delegate extends Ui.TextPickerDelegate {
 
   function onTextEntered(_sText, _bChanged) {
     // Update/create account (dictionary)
-    var dictAccount = $.TOTP_dictCurrentAccount;
+    var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
       dictAccount["K"] = dictAccount["K"].substring(0, 31)+_sText;
     }
@@ -54,8 +54,8 @@ class PickerAccountEditKey2Delegate extends Ui.TextPickerDelegate {
     }
 
     // Set account and exit
-    $.TOTP_dictCurrentAccount = dictAccount;
-    $.TOTP_arrCurrentCode = null;
+    $.dictMyCurrentTotpAccount = dictAccount;
+    $.arrMyCurrentTotpCode = null;
   }
 
   function onCancel() {

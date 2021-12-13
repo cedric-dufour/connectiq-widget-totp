@@ -28,8 +28,8 @@ class PickerAccountEditHash extends Ui.Picker {
 
   function initialize() {
     // Get value
-    var iValue = $.TOTP_dictCurrentAccount != null ? $.TOTP_dictCurrentAccount["H"] : Crypto.HASH_SHA1;
-    
+    var iValue = $.dictMyCurrentTotpAccount != null ? $.dictMyCurrentTotpAccount["H"] : Crypto.HASH_SHA1;
+
     // Initialize picker
     var oFactory = new PickerFactoryDictionary([Crypto.HASH_SHA1, Crypto.HASH_SHA256], [Ui.loadResource(Rez.Strings.valueAccountHashSHA1), Ui.loadResource(Rez.Strings.valueAccountHashSHA256)], { :font => Gfx.FONT_TINY });
     var iIndex = oFactory.indexOfKey(iValue);
@@ -57,17 +57,17 @@ class PickerAccountEditHashDelegate extends Ui.PickerDelegate {
 
   function onAccept(_amValues) {
     // Update/create account (dictionary)
-    var dictAccount = $.TOTP_dictCurrentAccount;
+    var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
       dictAccount["H"] = _amValues[0];
     }
     else {
-      dictAccount = { "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew), "K" => "", "E" => TOTP_Algorithms.ENCODING_BASE32, "D" => 6, "H" => _amValues[0], "T0" => 0l, "TX" => 30 };
+      dictAccount = { "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew), "K" => "", "E" => MyAlgorithms.ENCODING_BASE32, "D" => 6, "H" => _amValues[0], "T0" => 0l, "TX" => 30 };
     }
 
     // Set account and exit
-    $.TOTP_dictCurrentAccount = dictAccount;
-    $.TOTP_arrCurrentCode = null;
+    $.dictMyCurrentTotpAccount = dictAccount;
+    $.arrMyCurrentTotpCode = null;
     Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
 

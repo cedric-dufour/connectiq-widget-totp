@@ -26,12 +26,12 @@ using Toybox.Timer;
 //
 
 // Current account and code
-var TOTP_iCurrentAccount = null;
-var TOTP_dictCurrentAccount = null;
-var TOTP_arrCurrentCode = null;
+var iMyCurrentTotpAccount = null;
+var dictMyCurrentTotpAccount = null;
+var arrMyCurrentTotpCode = null;
 
 // Current view
-var TOTP_oCurrentView = null;
+var oMyView = null;
 
 
 //
@@ -39,14 +39,14 @@ var TOTP_oCurrentView = null;
 //
 
 // Storage slots
-const TOTP_STORAGE_SLOTS = 100;
+const MY_STORAGE_SLOTS = 100;
 
 
 //
 // CLASS
 //
 
-class TOTP_App extends App.AppBase {
+class MyApp extends App.AppBase {
 
   //
   // VARIABLES
@@ -68,14 +68,14 @@ class TOTP_App extends App.AppBase {
   }
 
   function onStart(state) {
-    //Sys.println("DEBUG: TOTP_App.onStart()");
+    //Sys.println("DEBUG: MyApp.onStart()");
 
     // DEBUG
     // // oathtool --totp=sha1 --digits=6 --base32 5B5E7MMX344QRHYO
     // App.Storage.setValue("ACT99",
     //                      { "ID" => "Google",
     //                          "K" => "5B5E7MMX344QRHYO",
-    //                          "E" => TOTP_Algorithms.ENCODING_BASE32,
+    //                          "E" => MyAlgorithms.ENCODING_BASE32,
     //                          "D" => 6,
     //                          "H" => Crypto.HASH_SHA1,
     //                          "T0" => 0l,
@@ -84,7 +84,7 @@ class TOTP_App extends App.AppBase {
     // App.Storage.setValue("ACT98",
     //                      { "ID" => "SHA1",
     //                          "K" => "3132333435363738393031323334353637383930",
-    //                          "E" => TOTP_Algorithms.ENCODING_HEX,
+    //                          "E" => MyAlgorithms.ENCODING_HEX,
     //                          "D" => 8,
     //                          "H" => Crypto.HASH_SHA1,
     //                          "T0" => 0l,
@@ -93,7 +93,7 @@ class TOTP_App extends App.AppBase {
     // App.Storage.setValue("ACT97",
     //                      { "ID" => "SHA256",
     //                          "K" => "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA",
-    //                          "E" => TOTP_Algorithms.ENCODING_BASE32,
+    //                          "E" => MyAlgorithms.ENCODING_BASE32,
     //                          "D" => 8,
     //                          "H" => Crypto.HASH_SHA256,
     //                          "T0" => 0l,
@@ -101,7 +101,7 @@ class TOTP_App extends App.AppBase {
   }
 
   function onStop(state) {
-    //Sys.println("DEBUG: TOTP_App.onStop()");
+    //Sys.println("DEBUG: MyApp.onStop()");
 
     // Stop UI update timer
     if(self.oUpdateTimer != null) {
@@ -111,13 +111,13 @@ class TOTP_App extends App.AppBase {
   }
 
   function getInitialView() {
-    //Sys.println("DEBUG: TOTP_App.getInitialView()");
+    //Sys.println("DEBUG: MyApp.getInitialView()");
 
-    return [new TOTP_View(), new TOTP_ViewDelegate()];
+    return [new MyView(), new MyViewDelegate()];
   }
 
   function onSettingsChanged() {
-    //Sys.println("DEBUG: TOTP_App.onSettingsChanged()");
+    //Sys.println("DEBUG: MyApp.onSettingsChanged()");
 
     // Import account
     if (App.Properties.getValue("importAccountName").length() > 0 and App.Properties.getValue("importAccountKey").length() > 0) {
@@ -147,23 +147,23 @@ class TOTP_App extends App.AppBase {
   //
 
   function updateApp() {
-    //Sys.println("DEBUG: TOTP_App.updateApp()");
+    //Sys.println("DEBUG: MyApp.updateApp()");
 
     // Update UI
     self.updateUi();
   }
 
   function updateUi() {
-    //Sys.println("DEBUG: TOTP_App.updateUi()");
+    //Sys.println("DEBUG: MyApp.updateUi()");
 
     // Update UI
-    if($.TOTP_oCurrentView != null) {
-      $.TOTP_oCurrentView.updateUi();
+    if($.oMyView != null) {
+      $.oMyView.updateUi();
     }
   }
 
   function startTimer() {
-    //Sys.println("DEBUG: TOTP_App.startTimer()");
+    //Sys.println("DEBUG: MyApp.startTimer()");
 
     // (Re-)Start the compute timer (delay 1 second)
     if(self.oUpdateTimer != null) {
@@ -174,10 +174,10 @@ class TOTP_App extends App.AppBase {
   }
 
   function onComputeTimer() {
-    //Sys.println("DEBUG: TOTP_App.onComputeTimer()");
+    //Sys.println("DEBUG: MyApp.onComputeTimer()");
 
     // Compute TOTP code
-    if($.TOTP_arrCurrentCode == null) {
+    if($.arrMyCurrentTotpCode == null) {
       self.computeTOTP();
     }
 
@@ -190,12 +190,12 @@ class TOTP_App extends App.AppBase {
   }
 
   function onUpdateTimer() {
-    //Sys.println("DEBUG: TOTP_App.onUpdateTimer()");
+    //Sys.println("DEBUG: MyApp.onUpdateTimer()");
     self.updateUi();
   }
-  
+
   function stopTimer() {
-    //Sys.println("DEBUG: TOTP_App.stopTimer()");
+    //Sys.println("DEBUG: MyApp.stopTimer()");
 
     // Stop timer
     if(self.oUpdateTimer != null) {
@@ -205,19 +205,19 @@ class TOTP_App extends App.AppBase {
   }
 
   function computeTOTP() {
-    //Sys.println("DEBUG: TOTP_App.computeTOTP()");
+    //Sys.println("DEBUG: MyApp.computeTOTP()");
 
     // Compute TOTP code
-    if($.TOTP_dictCurrentAccount != null) {
+    if($.dictMyCurrentTotpAccount != null) {
       var iNow = Time.now().value();
-      
+
       // ... counter
-      var amCounter = TOTP_Algorithms.TOTP_Counter(iNow, $.TOTP_dictCurrentAccount["T0"], $.TOTP_dictCurrentAccount["TX"]);
+      var amCounter = MyAlgorithms.TOTP_Counter(iNow, $.dictMyCurrentTotpAccount["T0"], $.dictMyCurrentTotpAccount["TX"]);
 
       // ... code
-      var baK = TOTP_Algorithms.ByteArray_fromEncoding($.TOTP_dictCurrentAccount["K"], $.TOTP_dictCurrentAccount["E"]);
-      $.TOTP_arrCurrentCode = [ TOTP_Algorithms.HOTP_Code($.TOTP_dictCurrentAccount["D"], baK, amCounter[0], $.TOTP_dictCurrentAccount["H"]),
-                                iNow + amCounter[2] - $.TOTP_dictCurrentAccount["TX"],
+      var baK = MyAlgorithms.ByteArray_fromEncoding($.dictMyCurrentTotpAccount["K"], $.dictMyCurrentTotpAccount["E"]);
+      $.arrMyCurrentTotpCode = [ MyAlgorithms.HOTP_Code($.dictMyCurrentTotpAccount["D"], baK, amCounter[0], $.dictMyCurrentTotpAccount["H"]),
+                                iNow + amCounter[2] - $.dictMyCurrentTotpAccount["TX"],
                                 iNow + amCounter[2] ];
     }
   }

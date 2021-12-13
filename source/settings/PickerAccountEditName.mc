@@ -28,7 +28,7 @@ class PickerAccountEditName extends Ui.TextPicker {
 
   function initialize() {
     // Initialize picker
-    TextPicker.initialize($.TOTP_dictCurrentAccount != null ? $.TOTP_dictCurrentAccount["ID"] : "");
+    TextPicker.initialize($.dictMyCurrentTotpAccount != null ? $.dictMyCurrentTotpAccount["ID"] : "");
   }
 
 }
@@ -45,16 +45,16 @@ class PickerAccountEditNameDelegate extends Ui.TextPickerDelegate {
 
   function onTextEntered(_sText, _bChanged) {
     // Update/create account (dictionary)
-    var dictAccount = $.TOTP_dictCurrentAccount;
+    var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
       dictAccount["ID"] = _sText;
     }
     else {
-      dictAccount = { "ID" => _sText, "K" => "", "E" => TOTP_Algorithms.ENCODING_BASE32, "D" => 6, "H" => Crypto.HASH_SHA1, "T0" => 0l, "TX" => 30 };
+      dictAccount = { "ID" => _sText, "K" => "", "E" => MyAlgorithms.ENCODING_BASE32, "D" => 6, "H" => Crypto.HASH_SHA1, "T0" => 0l, "TX" => 30 };
     }
 
     // Set account and exit
-    $.TOTP_dictCurrentAccount = dictAccount;
+    $.dictMyCurrentTotpAccount = dictAccount;
   }
 
   function onCancel() {
