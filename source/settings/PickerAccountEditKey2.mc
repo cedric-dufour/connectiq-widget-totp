@@ -48,7 +48,7 @@ class PickerAccountEditKey2Delegate extends Ui.TextPickerDelegate {
     // Update/create account (dictionary)
     var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
-      dictAccount["K"] = (dictAccount["K"] as String).substring(0, 31)+_sText;
+      dictAccount["K"] = (dictAccount["K"] as String)+_sText;
     }
     else {
       return true;

@@ -15,7 +15,7 @@ TOTP is a Garmin ConnectIQ Widget that displays:
 
 Each account is fully configurable, including:
  - name
- - secret key (up to 62 characters)
+ - secret key
  - secret key encoding (Hex, Base32 or Base64)
  - digits to display (from 6 to 10)
  - hash algorithm (SHA1 or SHA256)
