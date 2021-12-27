@@ -36,6 +36,7 @@ using Toybox.System as Sys;
 // MODULE
 //
 
+(:glance)
 module MyAlgorithms {
 
   //
