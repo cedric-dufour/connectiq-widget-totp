@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.System as Sys;
 using Toybox.WatchUi as Ui;
 
@@ -27,9 +28,9 @@ class MenuSettings extends Ui.Menu {
 
   function initialize() {
     Menu.initialize();
-    Menu.setTitle(Ui.loadResource(Rez.Strings.titleSettings));
-    Menu.addItem(Ui.loadResource(Rez.Strings.titleSettingsAccounts), :menuSettingsAccounts);
-    Menu.addItem(Ui.loadResource(Rez.Strings.titleSettingsAbout), :menuSettingsAbout);
+    Menu.setTitle(Ui.loadResource(Rez.Strings.titleSettings) as String);
+    Menu.addItem(Ui.loadResource(Rez.Strings.titleSettingsAccounts) as String, :menuSettingsAccounts);
+    Menu.addItem(Ui.loadResource(Rez.Strings.titleSettingsAbout) as String, :menuSettingsAbout);
   }
 
 }
@@ -47,11 +48,15 @@ class MenuSettingsDelegate extends Ui.MenuInputDelegate {
   function onMenuItem(item) {
     if (item == :menuSettingsAccounts) {
       //Sys.println("DEBUG: MenuSettingsDelegate.onMenuItem(:menuSettingsAccounts)");
-      Ui.pushView(new MenuSettingsAccounts(), new MenuSettingsAccountsDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(new MenuSettingsAccounts(),
+                  new MenuSettingsAccountsDelegate(),
+                  Ui.SLIDE_IMMEDIATE);
     }
     else if (item == :menuSettingsAbout) {
       //Sys.println("DEBUG: MenuSettingsDelegate.onMenuItem(:menuSettingsAbout)");
-      Ui.pushView(new MenuSettingsAbout(), new MenuSettingsAboutDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(new MenuSettingsAbout(),
+                  new MenuSettingsAboutDelegate(),
+                  Ui.SLIDE_IMMEDIATE);
     }
   }
 

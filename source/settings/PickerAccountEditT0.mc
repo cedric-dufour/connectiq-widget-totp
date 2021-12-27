@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Cryptography as Crypto;
 using Toybox.Graphics as Gfx;
 using Toybox.WatchUi as Ui;
@@ -28,7 +29,10 @@ class PickerAccountEditT0 extends Ui.Picker {
 
   function initialize() {
     // Get value
-    var lValue = $.dictMyCurrentTotpAccount != null ? $.dictMyCurrentTotpAccount["T0"] : 0;
+    var lValue =
+      $.dictMyCurrentTotpAccount != null
+      ? ($.dictMyCurrentTotpAccount as Dictionary<String>)["T0"] as Long
+      : 0l;
     if(lValue < 0l) {
       lValue = 0l;
     }
@@ -37,24 +41,28 @@ class PickerAccountEditT0 extends Ui.Picker {
     }
 
     // Split components
-    var amValues = new [4];
-    amValues[3] = (lValue % 1000).toNumber();
+    var aiValues = new Array<Number>[4];
+    aiValues[3] = (lValue % 1000).toNumber();
     lValue = lValue / 1000l;
-    amValues[2] = (lValue % 1000).toNumber();
+    aiValues[2] = (lValue % 1000).toNumber();
     lValue = lValue / 1000l;
-    amValues[1] = (lValue % 1000).toNumber();
+    aiValues[1] = (lValue % 1000).toNumber();
     lValue = lValue / 1000l;
-    amValues[0] = lValue.toNumber();
+    aiValues[0] = lValue.toNumber();
 
     // Initialize picker
     Picker.initialize({
-        :title => new Ui.Text({ :text => Ui.loadResource(Rez.Strings.titleAccountT0), :font => Gfx.FONT_TINY, :locX=>Ui.LAYOUT_HALIGN_CENTER, :locY=>Ui.LAYOUT_VALIGN_BOTTOM, :color => Gfx.COLOR_BLUE }),
-        :pattern => [ new PickerFactoryNumber(0, 100, { :langFormat => "$1$'" }),
-                      new PickerFactoryNumber(0, 999, { :langFormat => "$1$'", :format => "%03d" }),
-                      new PickerFactoryNumber(0, 999, { :langFormat => "$1$'", :format => "%03d" }),
-                      new PickerFactoryNumber(0, 999, { :format => "%03d" }) ],
-        :defaults => amValues
-    });
+        :title => new Ui.Text({
+            :text => Ui.loadResource(Rez.Strings.titleAccountT0) as String,
+            :font => Gfx.FONT_TINY,
+            :locX=>Ui.LAYOUT_HALIGN_CENTER,
+            :locY=>Ui.LAYOUT_VALIGN_BOTTOM,
+            :color => Gfx.COLOR_BLUE}),
+        :pattern => [new PickerFactoryNumber(0, 100, {:langFormat => "$1$'"}),
+                     new PickerFactoryNumber(0, 999, {:langFormat => "$1$'", :format => "%03d"}),
+                     new PickerFactoryNumber(0, 999, {:langFormat => "$1$'", :format => "%03d"}),
+                     new PickerFactoryNumber(0, 999, {:format => "%03d"})],
+        :defaults => aiValues});
   }
 
 }
@@ -79,18 +87,28 @@ class PickerAccountEditT0Delegate extends Ui.PickerDelegate {
       dictAccount["T0"] = lValue;
     }
     else {
-      dictAccount = { "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew), "K" => "", "E" => MyAlgorithms.ENCODING_BASE32, "D" => 6, "H" => Crypto.HASH_SHA1, "T0" => lValue, "T0" => 30 };
+      dictAccount = {
+        "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew) as String,
+        "K" => "",
+        "E" => MyAlgorithms.ENCODING_BASE32,
+        "D" => 6,
+        "H" => Crypto.HASH_SHA1,
+        "T0" => lValue,
+        "T0" => 30
+      } as Dictionary<String>?;
     }
 
     // Set account and exit
     $.dictMyCurrentTotpAccount = dictAccount;
     $.arrMyCurrentTotpCode = null;
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
   function onCancel() {
     // Exit
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
 }

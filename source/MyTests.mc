@@ -349,6 +349,7 @@ module MyTests {
     // SHA1: Test case T=59
     lT = 59l;
     sTOTP = "94287082";
+    _oLogger.debug(Lang.format("TOTP: $1$", [MyAlgorithms.TOTP_Code(8, baK, lT, 0, 30, Crypto.HASH_SHA1)]));
     if(sTOTP.equals(MyAlgorithms.TOTP_Code(8, baK, lT, 0, 30, Crypto.HASH_SHA1))) {
       _oLogger.debug(Lang.format("$1$ T=$2$: $3$", [STRING_TESTCASE, lT, STRING_PASS]));
     }

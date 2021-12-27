@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Application as App;
 using Toybox.Graphics as Gfx;
 using Toybox.WatchUi as Ui;
@@ -28,17 +29,15 @@ class PickerAccountsLoad extends Ui.Picker {
 
   function initialize() {
     // Accounts memory
-    var aiMemoryKeys = new [$.MY_STORAGE_SLOTS];
-    var asMemoryValues = new [$.MY_STORAGE_SLOTS];
-    var afMemoryDistances = new [$.MY_STORAGE_SLOTS];
+    var aiMemoryKeys = new Array<Number>[$.MY_STORAGE_SLOTS];
+    var asMemoryValues = new Array<String>[$.MY_STORAGE_SLOTS];
     var iMemoryUsed = 0;
     for(var n=0; n<$.MY_STORAGE_SLOTS; n++) {
       var s = n.format("%02d");
-      var dictAccount = App.Storage.getValue(Lang.format("ACT$1$", [s]));
+      var dictAccount = App.Storage.getValue(format("ACT$1$", [s])) as Dictionary<String>?;
       if(dictAccount != null) {
         aiMemoryKeys[iMemoryUsed] = n;
-        asMemoryValues[iMemoryUsed] = Lang.format("[$1$]\n$2$", [s, dictAccount["ID"]]);
-        afMemoryDistances[iMemoryUsed] = 0.0f;
+        asMemoryValues[iMemoryUsed] = format("[$1$]\n$2$", [s, dictAccount["ID"]]);
         iMemoryUsed++;
       }
     }
@@ -48,15 +47,19 @@ class PickerAccountsLoad extends Ui.Picker {
     if(iMemoryUsed > 0) {
       aiMemoryKeys = aiMemoryKeys.slice(0, iMemoryUsed);
       asMemoryValues = asMemoryValues.slice(0, iMemoryUsed);
-      oPattern = new PickerFactoryDictionary(aiMemoryKeys, asMemoryValues, { :font => Gfx.FONT_TINY });
+      oPattern = new PickerFactoryDictionary(aiMemoryKeys, asMemoryValues, {:font => Gfx.FONT_TINY});
     }
     else {
-      oPattern = new PickerFactoryDictionary([null], ["-"], { :color => Gfx.COLOR_DK_GRAY });
+      oPattern = new PickerFactoryDictionary([null], ["-"], {:color => Gfx.COLOR_DK_GRAY});
     }
     Picker.initialize({
-      :title => new Ui.Text({ :text => Ui.loadResource(Rez.Strings.titleAccountsLoad), :font => Gfx.FONT_TINY, :locX=>Ui.LAYOUT_HALIGN_CENTER, :locY=>Ui.LAYOUT_VALIGN_BOTTOM, :color => Gfx.COLOR_BLUE }),
-      :pattern => [ oPattern ]
-    });
+        :title => new Ui.Text({
+            :text => Ui.loadResource(Rez.Strings.titleAccountsLoad) as String,
+            :font => Gfx.FONT_TINY,
+            :locX=>Ui.LAYOUT_HALIGN_CENTER,
+            :locY=>Ui.LAYOUT_VALIGN_BOTTOM,
+            :color => Gfx.COLOR_BLUE}),
+      :pattern => [oPattern]});
   }
 
 }
@@ -74,20 +77,24 @@ class PickerAccountsLoadDelegate extends Ui.PickerDelegate {
   function onAccept(_amValues) {
     // Load account
     if(_amValues[0] != null) {
-      var s = _amValues[0].format("%02d");
-      var dictAccount = App.Storage.getValue(Lang.format("ACT$1$", [s]));
-      // WARNING: We MUST store a new (different) dictionary instance (deep copy)!
-      $.dictMyCurrentTotpAccount = LangUtils.copy(dictAccount);
-      $.arrMyCurrentTotpCode = null;
+      var s = (_amValues[0] as Number).format("%02d");
+      var dictAccount = App.Storage.getValue(format("ACT$1$", [s])) as Dictionary<String>?;
+      if(dictAccount != null) {
+        // WARNING: We MUST store a new (different) dictionary instance (deep copy)!
+        $.dictMyCurrentTotpAccount = LangUtils.copy(dictAccount as Object) as Dictionary<String>?;
+        $.arrMyCurrentTotpCode = null;
+      }
     }
 
     // Exit
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
   function onCancel() {
     // Exit
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
 }

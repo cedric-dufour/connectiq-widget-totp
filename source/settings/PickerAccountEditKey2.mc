@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Cryptography as Crypto;
 using Toybox.Graphics as Gfx;
 using Toybox.WatchUi as Ui;
@@ -47,19 +48,21 @@ class PickerAccountEditKey2Delegate extends Ui.TextPickerDelegate {
     // Update/create account (dictionary)
     var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
-      dictAccount["K"] = dictAccount["K"].substring(0, 31)+_sText;
+      dictAccount["K"] = (dictAccount["K"] as String).substring(0, 31)+_sText;
     }
     else {
-      return;
+      return true;
     }
 
     // Set account and exit
-    $.dictMyCurrentTotpAccount = dictAccount;
+    $.dictMyCurrentTotpAccount = dictAccount as Dictionary<String>?;
     $.arrMyCurrentTotpCode = null;
+    return true;
   }
 
   function onCancel() {
     // Exit
+    return true;
   }
 
 }

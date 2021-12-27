@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Cryptography as Crypto;
 using Toybox.Graphics as Gfx;
 using Toybox.WatchUi as Ui;
@@ -28,19 +29,25 @@ class PickerAccountEditEncoding extends Ui.Picker {
 
   function initialize() {
     // Get value
-    var iValue = $.dictMyCurrentTotpAccount != null ? $.dictMyCurrentTotpAccount["E"] : MyAlgorithms.ENCODING_BASE32;
+    var iValue =
+      $.dictMyCurrentTotpAccount != null
+      ? ($.dictMyCurrentTotpAccount as Dictionary<String>)["E"] as Number
+      : MyAlgorithms.ENCODING_BASE32;
 
     // Initialize picker
-    var oFactory = new PickerFactoryDictionary([MyAlgorithms.ENCODING_HEX, MyAlgorithms.ENCODING_BASE32, MyAlgorithms.ENCODING_BASE64], [Ui.loadResource(Rez.Strings.valueAccountEncodingHex), Ui.loadResource(Rez.Strings.valueAccountEncodingBase32), Ui.loadResource(Rez.Strings.valueAccountEncodingBase64)], { :font => Gfx.FONT_TINY });
+    var oFactory = new PickerFactoryDictionary([MyAlgorithms.ENCODING_HEX, MyAlgorithms.ENCODING_BASE32, MyAlgorithms.ENCODING_BASE64],
+                                               [Ui.loadResource(Rez.Strings.valueAccountEncodingHex), Ui.loadResource(Rez.Strings.valueAccountEncodingBase32), Ui.loadResource(Rez.Strings.valueAccountEncodingBase64)],
+                                               {:font => Gfx.FONT_TINY});
     var iIndex = oFactory.indexOfKey(iValue);
-    if(iIndex == null) {
-      iIndex = MyAlgorithms.ENCODING_BASE32;
-    }
     Picker.initialize({
-        :title => new Ui.Text({ :text => Ui.loadResource(Rez.Strings.titleAccountEncoding), :font => Gfx.FONT_TINY, :locX=>Ui.LAYOUT_HALIGN_CENTER, :locY=>Ui.LAYOUT_VALIGN_BOTTOM, :color => Gfx.COLOR_BLUE }),
-        :pattern => [ oFactory ],
-        :defaults => [ iIndex ]
-    });
+        :title => new Ui.Text({
+            :text => Ui.loadResource(Rez.Strings.titleAccountEncoding) as String,
+            :font => Gfx.FONT_TINY,
+            :locX=>Ui.LAYOUT_HALIGN_CENTER,
+            :locY=>Ui.LAYOUT_VALIGN_BOTTOM,
+            :color => Gfx.COLOR_BLUE}),
+        :pattern => [oFactory],
+        :defaults => [iIndex >= 0 ? iIndex : MyAlgorithms.ENCODING_BASE32]});
   }
 
 }
@@ -59,21 +66,31 @@ class PickerAccountEditEncodingDelegate extends Ui.PickerDelegate {
     // Update/create account (dictionary)
     var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
-      dictAccount["E"] = _amValues[0];
+      dictAccount["E"] = _amValues[0] as Number;
     }
     else {
-      dictAccount = { "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew), "K" => "", "E" => _amValues[0], "D" => 6, "H" => Crypto.HASH_SHA1, "T0" => 0l, "TX" => 30 };
+      dictAccount = {
+        "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew) as String,
+        "K" => "",
+        "E" => _amValues[0] as Number,
+        "D" => 6,
+        "H" => Crypto.HASH_SHA1,
+        "T0" => 0l,
+        "TX" => 30
+      } as Dictionary<String>?;
     }
 
     // Set account and exit
     $.dictMyCurrentTotpAccount = dictAccount;
     $.arrMyCurrentTotpCode = null;
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
   function onCancel() {
     // Exit
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
 }

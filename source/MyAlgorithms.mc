@@ -16,8 +16,8 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Cryptography as Crypto;
-using Toybox.Lang;
 using Toybox.Math;
 using Toybox.System as Sys;
 
@@ -57,62 +57,64 @@ module MyAlgorithms {
   // FUNCTIONS: self
   //
 
-  function HMAC(_baK, _baM, _iH) {
+  function HMAC(_baK as ByteArray, _baM as ByteArray, _iH as Number) as ByteArray {
     // (RFC2104, §2 and §3)
 
-    // Natively-supported HMAC
-    if(_iH == Crypto.HASH_SHA256) {
-      var oHMAC = new Crypto.HashBasedMessageAuthenticationCode({ :algorithm => _iH, :key => _baK });
+    // HMAC
+    try {
+      // Natively-supported
+      var oHMAC = new Crypto.HashBasedMessageAuthenticationCode({:algorithm => _iH as Crypto.HashAlgorithm, :key => _baK});
       oHMAC.update(_baM);
       return oHMAC.digest();
     }
+    catch(e) {
+      // F***! We must do our own implementation (Why, Garmin? Why?!?)
+      var oHASH;
 
-    // F***! We must do our own implementation (Why, Garmin? Why?!?)
-    var oHASH;
+      // ... key size
+      if(_baK.size() > HMAC_BLOCKSIZE) {
+        oHASH = new Crypto.Hash({:algorithm => _iH as Crypto.HashAlgorithm});
+        oHASH.update(_baK);
+        _baK = oHASH.digest();
+      }
 
-    // ... key size
-    if(_baK.size() > HMAC_BLOCKSIZE) {
-      oHASH = new Crypto.Hash({ :algorithm => _iH });
-      oHASH.update(_baK);
-      _baK = oHASH.digest();
+      // ... step (1) and (2)
+      var baIPad = new [HMAC_BLOCKSIZE]b;
+      for (var i=0; i<_baK.size(); i++) {
+        baIPad[i] = _baK[i] ^ HMAC_IPAD;  // Ki XOR ipad
+      }
+      for (var i=_baK.size(); i<HMAC_BLOCKSIZE; i++) {
+        baIPad[i] = HMAC_IPAD;  // 0 XOR ipad
+      }
+
+      // ... step (3)
+      baIPad.addAll(_baM);
+
+      // ... step (4)
+      oHASH = new Crypto.Hash({:algorithm => _iH as Crypto.HashAlgorithm});
+      oHASH.update(baIPad);
+      baIPad = oHASH.digest();
+
+      // ... step (1) and (5)
+      var baOPad = new [HMAC_BLOCKSIZE]b;
+      for (var i=0; i<_baK.size(); i++) {
+        baOPad[i] = _baK[i] ^ HMAC_OPAD;  // Ki XOR opad
+      }
+      for (var i=_baK.size(); i<HMAC_BLOCKSIZE; i++) {
+        baOPad[i] = HMAC_OPAD;  // 0 XOR opad
+      }
+
+      // ... step (6)
+      baOPad.addAll(baIPad);
+
+      // ... step (7)
+      oHASH = new Crypto.Hash({:algorithm => _iH as Crypto.HashAlgorithm});
+      oHASH.update(baOPad);
+      return oHASH.digest();
     }
-
-    // ... step (1) and (2)
-    var baIPad = new [HMAC_BLOCKSIZE]b;
-    for (var i=0; i<_baK.size(); i++) {
-      baIPad[i] = _baK[i] ^ HMAC_IPAD;  // Ki XOR ipad
-    }
-    for (var i=_baK.size(); i<HMAC_BLOCKSIZE; i++) {
-      baIPad[i] = HMAC_IPAD;  // 0 XOR ipad
-    }
-
-    // ... step (3)
-    baIPad.addAll(_baM);
-
-    // ... step (4)
-    oHASH = new Crypto.Hash({ :algorithm => _iH });
-    oHASH.update(baIPad);
-    baIPad = oHASH.digest();
-
-    // ... step (1) and (5)
-    var baOPad = new [HMAC_BLOCKSIZE]b;
-    for (var i=0; i<_baK.size(); i++) {
-      baOPad[i] = _baK[i] ^ HMAC_OPAD;  // Ki XOR opad
-    }
-    for (var i=_baK.size(); i<HMAC_BLOCKSIZE; i++) {
-      baOPad[i] = HMAC_OPAD;  // 0 XOR opad
-    }
-
-    // ... step (6)
-    baOPad.addAll(baIPad);
-
-    // ... step (7)
-    oHASH = new Crypto.Hash({ :algorithm => _iH });
-    oHASH.update(baOPad);
-    return oHASH.digest();
   }
 
-  function HOTP_Code(_iD, _baK, _baC, _iH) {
+  function HOTP_Code(_iD as Number, _baK as ByteArray, _baC as ByteArray, _iH as Number) as String {
     // (RFC4226, §5.3)
 
     // HMAC
@@ -133,11 +135,11 @@ module MyAlgorithms {
     // Code
 
     // ... last D digits => HTOP code
-    var sCode = iBinaryCode.format("%010d");
+    var sCode = (iBinaryCode as Number).format("%010d");
     return sCode.substring(sCode.length()-_iD, sCode.length());
   }
 
-  function TOTP_Counter(_lT, _lT0, _iTX) {
+  function TOTP_Counter(_lT as Long, _lT0 as Long, _iTX as Number) as Array {
     // (RFC6238, §4.2)
 
     // Counter
@@ -155,12 +157,12 @@ module MyAlgorithms {
     return [baTc, lTc, iTr];
   }
 
-  function TOTP_Code(_iD, _baK, _lT, _lT0, _iTX, _iH) {
+  function TOTP_Code(_iD as Number, _baK as ByteArray, _lT as Long, _lT0 as Long, _iTX as Number, _iH as Number) as String {
     // Code (HOTP with C=Tc)
-    return HOTP_Code(_iD, _baK, MyAlgorithms.TOTP_Counter(_lT, _lT0, _iTX)[0], _iH);
+    return HOTP_Code(_iD, _baK, MyAlgorithms.TOTP_Counter(_lT, _lT0, _iTX)[0] as ByteArray, _iH);
   }
 
-  function ByteArray_fromEncoding(_s, _iE) {
+  function ByteArray_fromEncoding(_s as String, _iE as Number) as ByteArray {
     if(_iE == MyAlgorithms.ENCODING_HEX) {
       return LangUtils.ByteArray_fromHex(_s);
     }

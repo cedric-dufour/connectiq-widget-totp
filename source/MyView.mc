@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Cryptography as Crypto;
 using Toybox.Application as App;
 using Toybox.Graphics as Gfx;
@@ -42,7 +43,7 @@ class MyView extends Ui.View {
   //
 
   // Display mode (internal)
-  private var bShow;
+  private var bShow as Boolean = false;
 
 
   //
@@ -51,9 +52,6 @@ class MyView extends Ui.View {
 
   function initialize() {
     View.initialize();
-
-    // Display mode (internal)
-    self.bShow = false;
   }
 
   function onLayout(_oDC) {
@@ -69,7 +67,6 @@ class MyView extends Ui.View {
     // Done
     self.bShow = true;
     $.oMyView = self;
-    return true;
   }
 
   function onUpdate(_oDC) {
@@ -78,14 +75,11 @@ class MyView extends Ui.View {
     // Update layout
     View.onUpdate(_oDC);
     self.drawLayout(_oDC);
-
-    // Done
-    return true;
   }
 
   function onHide() {
     //Sys.println("DEBUG: MyView.onHide()");
-    App.getApp().stopTimer();
+    (App.getApp() as MyApp).stopTimer();
     $.oMyView = null;
     self.bShow = false;
   }
@@ -95,19 +89,19 @@ class MyView extends Ui.View {
   // FUNCTIONS: self
   //
 
-  function reloadSettings() {
+  function reloadSettings() as Void {
     //Sys.println("DEBUG: MyView.reloadSettings()");
 
     // Schedule pending computation
     if($.dictMyCurrentTotpAccount != null) {
-      App.getApp().startTimer();
+      (App.getApp() as MyApp).startTimer();
     }
 
     // Update application state
-    App.getApp().updateApp();
+    (App.getApp() as MyApp).updateApp();
   }
 
-  function updateUi() {
+  function updateUi() as Void {
     //Sys.println("DEBUG: MyView.updateUi()");
 
     // Request UI update
@@ -116,19 +110,19 @@ class MyView extends Ui.View {
     }
   }
 
-  function drawLayout(_oDC) {
+  function drawLayout(_oDC) as Void {
     //Sys.println("DEBUG: MyView.drawLayout()");
     var iNow = Time.now().value();
-    //Sys.println(Lang.format("DEBUG: Now = $1$", [iNow]));
+    //Sys.println(format("DEBUG: Now = $1$", [iNow]));
 
     // Draw background
     _oDC.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_BLACK);
     _oDC.clear();
 
     // Data
-    if($.arrMyCurrentTotpCode != null and iNow >= $.arrMyCurrentTotpCode[2]) {
+    if($.arrMyCurrentTotpCode != null and iNow >= ($.arrMyCurrentTotpCode as Array)[2]) {
       // ... re-compute expired TOTP code
-      App.getApp().computeTOTP();
+      (App.getApp() as MyApp).computeTOTP();
     }
 
     // Draw
@@ -139,10 +133,10 @@ class MyView extends Ui.View {
 
     // ... account
     if($.dictMyCurrentTotpAccount != null) {
-      sValue = $.dictMyCurrentTotpAccount["ID"];
+      sValue = ($.dictMyCurrentTotpAccount as Dictionary<String>)["ID"] as String;
     }
     else {
-      sValue = Ui.loadResource(Rez.Strings.labelAccountSelect);
+      sValue = Ui.loadResource(Rez.Strings.labelAccountSelect) as String;
     }
     _oDC.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_BLACK);
     _oDC.drawText(iX, iY, Gfx.FONT_MEDIUM, sValue, Gfx.TEXT_JUSTIFY_CENTER);
@@ -150,7 +144,7 @@ class MyView extends Ui.View {
 
     // ... TOTP
     if($.arrMyCurrentTotpCode != null) {
-      sValue = $.arrMyCurrentTotpCode[0];
+      sValue = ($.arrMyCurrentTotpCode as Array)[0] as String;
     }
     else if($.dictMyCurrentTotpAccount != null) {
       sValue = self.NOVALUE_PENDING;
@@ -164,13 +158,15 @@ class MyView extends Ui.View {
 
     // ... time (remaining)
     if($.arrMyCurrentTotpCode != null) {
-      //Sys.println(Lang.format("DEBUG: Code = $1$", [$.arrMyCurrentTotpCode]));
+      //Sys.println(format("DEBUG: Code = $1$", [$.arrMyCurrentTotpCode]));
       _oDC.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_BLACK);
       _oDC.setPenWidth(1);
       _oDC.drawRectangle(iX/2-3, iY-3, iX+6, 6);
 
-      var fValidity = (iNow - $.arrMyCurrentTotpCode[1]).toFloat()/($.arrMyCurrentTotpCode[2] - $.arrMyCurrentTotpCode[1]).toFloat();
-      //Sys.println(Lang.format("DEBUG: Validity = $1$", [fValidity]));
+      var fValidity =
+        (iNow - ($.arrMyCurrentTotpCode as Array)[1] as Number).toFloat()
+        / (($.arrMyCurrentTotpCode as Array)[2] as Number - ($.arrMyCurrentTotpCode as Array)[1] as Number).toFloat();
+      //Sys.println(format("DEBUG: Validity = $1$", [fValidity]));
       _oDC.setPenWidth(4);
       _oDC.drawLine(iX/2, iY, iX/2+iX*fValidity, iY);
     }
@@ -187,7 +183,9 @@ class MyViewDelegate extends Ui.BehaviorDelegate {
 
   function onMenu() {
     //Sys.println("DEBUG: MyViewDelegate.onMenu()");
-    Ui.pushView(new MenuSettings(), new MenuSettingsDelegate(), Ui.SLIDE_IMMEDIATE);
+    Ui.pushView(new MenuSettings(),
+                new MenuSettingsDelegate(),
+                Ui.SLIDE_IMMEDIATE);
     return true;
   }
 
@@ -195,19 +193,19 @@ class MyViewDelegate extends Ui.BehaviorDelegate {
     //Sys.println("DEBUG: MyViewDelegate.onSelect()");
 
     // Stop and reset any (pending) computation
-    App.getApp().stopTimer();
+    (App.getApp() as MyApp).stopTimer();
     $.arrMyCurrentTotpCode = null;
 
     // Select next available account
     $.dictMyCurrentTotpAccount = null;
-    var i = $.iMyCurrentTotpAccount != null ? ($.iMyCurrentTotpAccount + 1) % $.MY_STORAGE_SLOTS : 0;
+    var i = $.iMyCurrentTotpAccount != null ? ($.iMyCurrentTotpAccount as Number + 1) % $.MY_STORAGE_SLOTS : 0;
     for(var n=0; n<$.MY_STORAGE_SLOTS; n++) {
       var s = i.format("%02d");
-      var dictAccount = App.Storage.getValue(Lang.format("ACT$1$", [s]));
+      var dictAccount = App.Storage.getValue(format("ACT$1$", [s])) as Dictionary<String>?;
       if(dictAccount != null) {
         $.iMyCurrentTotpAccount = i;
-        $.dictMyCurrentTotpAccount = dictAccount;
-        App.getApp().startTimer();
+        $.dictMyCurrentTotpAccount = dictAccount as Dictionary<String>?;
+        (App.getApp() as MyApp).startTimer();
         break;
       }
       i = (i + 1) % $.MY_STORAGE_SLOTS;

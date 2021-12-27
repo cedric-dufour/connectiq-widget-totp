@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Cryptography as Crypto;
 using Toybox.Graphics as Gfx;
 using Toybox.WatchUi as Ui;
@@ -28,19 +29,25 @@ class PickerAccountEditHash extends Ui.Picker {
 
   function initialize() {
     // Get value
-    var iValue = $.dictMyCurrentTotpAccount != null ? $.dictMyCurrentTotpAccount["H"] : Crypto.HASH_SHA1;
+    var iValue =
+      $.dictMyCurrentTotpAccount != null
+      ? ($.dictMyCurrentTotpAccount as Dictionary<String>)["H"] as Number
+      : Crypto.HASH_SHA1;
 
     // Initialize picker
-    var oFactory = new PickerFactoryDictionary([Crypto.HASH_SHA1, Crypto.HASH_SHA256], [Ui.loadResource(Rez.Strings.valueAccountHashSHA1), Ui.loadResource(Rez.Strings.valueAccountHashSHA256)], { :font => Gfx.FONT_TINY });
+    var oFactory = new PickerFactoryDictionary([Crypto.HASH_SHA1, Crypto.HASH_SHA256],
+                                               [Ui.loadResource(Rez.Strings.valueAccountHashSHA1), Ui.loadResource(Rez.Strings.valueAccountHashSHA256)],
+                                               {:font => Gfx.FONT_TINY});
     var iIndex = oFactory.indexOfKey(iValue);
-    if(iIndex == null) {
-      iIndex = Crypto.HASH_SHA1;
-    }
     Picker.initialize({
-        :title => new Ui.Text({ :text => Ui.loadResource(Rez.Strings.titleAccountHash), :font => Gfx.FONT_TINY, :locX=>Ui.LAYOUT_HALIGN_CENTER, :locY=>Ui.LAYOUT_VALIGN_BOTTOM, :color => Gfx.COLOR_BLUE }),
-        :pattern => [ oFactory ],
-        :defaults => [ iIndex ]
-    });
+        :title => new Ui.Text({
+            :text => Ui.loadResource(Rez.Strings.titleAccountHash) as String,
+            :font => Gfx.FONT_TINY,
+            :locX=>Ui.LAYOUT_HALIGN_CENTER,
+            :locY=>Ui.LAYOUT_VALIGN_BOTTOM,
+            :color => Gfx.COLOR_BLUE}),
+        :pattern => [oFactory],
+        :defaults => [iIndex >= 0 ? iIndex : Crypto.HASH_SHA1]});
   }
 
 }
@@ -59,21 +66,31 @@ class PickerAccountEditHashDelegate extends Ui.PickerDelegate {
     // Update/create account (dictionary)
     var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
-      dictAccount["H"] = _amValues[0];
+      dictAccount["H"] = _amValues[0] as Number;
     }
     else {
-      dictAccount = { "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew), "K" => "", "E" => MyAlgorithms.ENCODING_BASE32, "D" => 6, "H" => _amValues[0], "T0" => 0l, "TX" => 30 };
+      dictAccount = {
+        "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew) as String,
+        "K" => "",
+        "E" => MyAlgorithms.ENCODING_BASE32,
+        "D" => 6,
+        "H" => _amValues[0] as Number,
+        "T0" => 0l,
+        "TX" => 30
+      } as Dictionary<String>?;
     }
 
     // Set account and exit
     $.dictMyCurrentTotpAccount = dictAccount;
     $.arrMyCurrentTotpCode = null;
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
   function onCancel() {
     // Exit
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
 }

@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.System as Sys;
 using Toybox.WatchUi as Ui;
 
@@ -27,12 +28,12 @@ class MenuSettingsAccounts extends Ui.Menu {
 
   function initialize() {
     Menu.initialize();
-    Menu.setTitle(Ui.loadResource(Rez.Strings.titleSettingsAccounts));
-    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsNew), :menuAccountsNew);
-    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsEdit), :menuAccountsEdit);
-    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsSave), :menuAccountsSave);
-    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsLoad), :menuAccountsLoad);
-    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsDelete), :menuAccountsDelete);
+    Menu.setTitle(Ui.loadResource(Rez.Strings.titleSettingsAccounts) as String);
+    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsNew) as String, :menuAccountsNew);
+    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsEdit) as String, :menuAccountsEdit);
+    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsSave) as String, :menuAccountsSave);
+    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsLoad) as String, :menuAccountsLoad);
+    Menu.addItem(Ui.loadResource(Rez.Strings.titleAccountsDelete) as String, :menuAccountsDelete);
   }
 
 }
@@ -52,23 +53,33 @@ class MenuSettingsAccountsDelegate extends Ui.MenuInputDelegate {
       //Sys.println("DEBUG: MenuSettingsAccountsDelegate.onMenuItem(:menuAccountsNew)");
       $.dictMyCurrentTotpAccount = null;
       $.arrMyCurrentTotpCode = null;
-      Ui.pushView(new MenuAccountsEdit(), new MenuAccountsEditDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(new MenuAccountsEdit(),
+                  new MenuAccountsEditDelegate(),
+                  Ui.SLIDE_IMMEDIATE);
     }
     else if (item == :menuAccountsEdit) {
       //Sys.println("DEBUG: MenuSettingsAccountsDelegate.onMenuItem(:menuAccountsEdit)");
-      Ui.pushView(new MenuAccountsEdit(), new MenuAccountsEditDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(new MenuAccountsEdit(),
+                  new MenuAccountsEditDelegate(),
+                  Ui.SLIDE_IMMEDIATE);
     }
     else if (item == :menuAccountsSave) {
       //Sys.println("DEBUG: MenuSettingsAccountsDelegate.onMenuItem(:menuAccountsSave)");
-      Ui.pushView(new PickerAccountsSave(), new PickerAccountsSaveDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(new PickerAccountsSave(),
+                  new PickerAccountsSaveDelegate(),
+                  Ui.SLIDE_IMMEDIATE);
     }
     else if (item == :menuAccountsLoad) {
       //Sys.println("DEBUG: MenuSettingsAccountsDelegate.onMenuItem(:menuAccountsLoad)");
-      Ui.pushView(new PickerAccountsLoad(), new PickerAccountsLoadDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(new PickerAccountsLoad(),
+                  new PickerAccountsLoadDelegate(),
+                  Ui.SLIDE_IMMEDIATE);
     }
     else if (item == :menuAccountsDelete) {
       //Sys.println("DEBUG: MenuSettingsAccountsDelegate.onMenuItem(:menuAccountsDelete)");
-      Ui.pushView(new PickerAccountsDelete(), new PickerAccountsDeleteDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(new PickerAccountsDelete(),
+                  new PickerAccountsDeleteDelegate(),
+                  Ui.SLIDE_IMMEDIATE);
     }
   }
 

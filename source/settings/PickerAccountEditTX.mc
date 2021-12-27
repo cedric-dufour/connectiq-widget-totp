@@ -16,6 +16,7 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Cryptography as Crypto;
 using Toybox.Graphics as Gfx;
 using Toybox.WatchUi as Ui;
@@ -28,7 +29,10 @@ class PickerAccountEditTX extends Ui.Picker {
 
   function initialize() {
     // Get value
-    var iValue = $.dictMyCurrentTotpAccount != null ? $.dictMyCurrentTotpAccount["TX"] : 30;
+    var iValue =
+      $.dictMyCurrentTotpAccount != null
+      ? ($.dictMyCurrentTotpAccount as Dictionary<String>)["TX"] as Number
+      : 30;
     if(iValue < 10) {
       iValue = 10;
     }
@@ -39,10 +43,14 @@ class PickerAccountEditTX extends Ui.Picker {
     // Initialize picker
     var oFactory = new PickerFactoryNumber(10, 600, null);
     Picker.initialize({
-        :title => new Ui.Text({ :text => Ui.loadResource(Rez.Strings.titleAccountTX), :font => Gfx.FONT_TINY, :locX=>Ui.LAYOUT_HALIGN_CENTER, :locY=>Ui.LAYOUT_VALIGN_BOTTOM, :color => Gfx.COLOR_BLUE }),
-        :pattern => [ oFactory ],
-        :defaults => [ oFactory.indexOf(iValue) ]
-    });
+        :title => new Ui.Text({
+            :text => Ui.loadResource(Rez.Strings.titleAccountTX) as String,
+            :font => Gfx.FONT_TINY,
+            :locX=>Ui.LAYOUT_HALIGN_CENTER,
+            :locY=>Ui.LAYOUT_VALIGN_BOTTOM,
+            :color => Gfx.COLOR_BLUE}),
+        :pattern => [oFactory],
+        :defaults => [oFactory.indexOf(iValue)]});
   }
 
 }
@@ -61,21 +69,31 @@ class PickerAccountEditTXDelegate extends Ui.PickerDelegate {
     // Update/create account (dictionary)
     var dictAccount = $.dictMyCurrentTotpAccount;
     if(dictAccount != null) {
-      dictAccount["TX"] = _amValues[0];
+      dictAccount["TX"] = _amValues[0] as Number;
     }
     else {
-      dictAccount = { "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew), "K" => "", "E" => MyAlgorithms.ENCODING_BASE32, "D" => 6, "H" => Crypto.HASH_SHA1, "T0" => 0l, "TX" => _amValues[0] };
+      dictAccount = {
+        "ID" => Ui.loadResource(Rez.Strings.valueAccountNameNew) as String,
+        "K" => "",
+        "E" => MyAlgorithms.ENCODING_BASE32,
+        "D" => 6,
+        "H" => Crypto.HASH_SHA1,
+        "T0" => 0l,
+        "TX" => _amValues[0] as Number
+      } as Dictionary<String>?;
     }
 
     // Set account and exit
     $.dictMyCurrentTotpAccount = dictAccount;
     $.arrMyCurrentTotpCode = null;
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
   function onCancel() {
     // Exit
     Ui.popView(Ui.SLIDE_IMMEDIATE);
+    return true;
   }
 
 }

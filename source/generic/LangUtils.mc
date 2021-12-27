@@ -1,7 +1,7 @@
 // -*- mode:java; tab-width:2; c-basic-offset:2; intent-tabs-mode:nil; -*- ex: set tabstop=2 expandtab:
 
 // Generic ConnectIQ Helpers/Resources (CIQ Helpers)
-// Copyright (C) 2017-2018 Cedric Dufour <http://cedric.dufour.name>
+// Copyright (C) 2017-2021 Cedric Dufour <http://cedric.dufour.name>
 //
 // Generic ConnectIQ Helpers/Resources (CIQ Helpers) is free software:
 // you can redistribute it and/or modify it under the terms of the GNU General
@@ -16,34 +16,41 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
-using Toybox.Lang;
+import Toybox.Lang;
+using Toybox.Math;
+using Toybox.Time;
+using Toybox.Time.Gregorian;
 
 module LangUtils {
 
+  //
+  // FUNCTIONS: data primitives
+  //
+
   // Deep-copy the given object
-  function copy(_oObject) {
+  function copy(_oObject as Object) as Object {
     var oCopy = null;
     if(_oObject instanceof Lang.Array) {
       var iSize = _oObject.size();
-      oCopy = new [iSize];
+      oCopy = new Array<Object>[iSize];
       for(var i=0; i<iSize; i++) {
-        oCopy[i] = LangUtils.copy(_oObject[i]);
+        oCopy[i] = LangUtils.copy(_oObject[i] as Object);
       }
     }
     else if(_oObject instanceof Lang.Dictionary) {
       var amKeys = _oObject.keys();
       var iSize = amKeys.size();
-      oCopy = {};
+      oCopy = {} as Dictionary<Object, Object>;
       for(var i=0; i<iSize; i++) {
         var mKey = amKeys[i];
-        oCopy.put(mKey, LangUtils.copy(_oObject.get(mKey)));
+        oCopy.put(mKey, LangUtils.copy(_oObject.get(mKey) as Object));
       }
     }
     else if(_oObject instanceof Lang.Exception) {
-      throw new Lang.UnexpectedTypeException();
+      throw new Lang.UnexpectedTypeException("Exception may not be deep-copied", null, null);
     }
     else if(_oObject instanceof Lang.Method) {
-      throw new Lang.UnexpectedTypeException();
+      throw new Lang.UnexpectedTypeException("Method may not be deep-copied", null, null);
     }
     else {
       oCopy = _oObject;
@@ -52,19 +59,19 @@ module LangUtils {
   }
 
   // Convert a 64-bit (long) integer to byte-array (most significant byte first)
-  function ByteArray_fromLong(_l) {
-    return [ (_l >> 56).toNumber() & 0xFF,
-             (_l >> 48).toNumber() & 0xFF,
-             (_l >> 40).toNumber() & 0xFF,
-             (_l >> 32).toNumber() & 0xFF,
-             (_l >> 24).toNumber() & 0xFF,
-             (_l >> 16).toNumber() & 0xFF,
-             (_l >> 8).toNumber() & 0xFF,
-             _l.toNumber() & 0xFF ]b;
+  function ByteArray_fromLong(_l as Long) as ByteArray {
+    return [(_l >> 56).toNumber() & 0xFF,
+            (_l >> 48).toNumber() & 0xFF,
+            (_l >> 40).toNumber() & 0xFF,
+            (_l >> 32).toNumber() & 0xFF,
+            (_l >> 24).toNumber() & 0xFF,
+            (_l >> 16).toNumber() & 0xFF,
+            (_l >> 8).toNumber() & 0xFF,
+            _l.toNumber() & 0xFF]b;
   }
-  
+
   // Convert an hexadecimal-encoded string to byte-array
-  function ByteArray_fromHex(_s) {
+  function ByteArray_fromHex(_s as String) as ByteArray {
     // NOTE: Hex = 4-bits/elmt <-> ByteArray = 8-bits/elmt
     //   CB:       16 elmts    (64 bits)       8 elmts
     var ac = _s.toUpper().toCharArray();
@@ -96,10 +103,10 @@ module LangUtils {
     }
     return ba.slice(0, bits/8);
   }
-  
+
   // Convert a base32-encoded string to byte-array
   // REF: https://tools.ietf.org/html/rfc4648
-  function ByteArray_fromBase32(_s) {
+  function ByteArray_fromBase32(_s as String) as ByteArray {
     // NOTE: Base32 = 5-bits/elmt <-> ByteArray = 8-bits/elmt
     //   CB:          8 elmts     (40 bits)       5 elmts
     var ac = _s.toUpper().toCharArray();
@@ -131,10 +138,10 @@ module LangUtils {
     }
     return ba.slice(0, bits/8);
   }
-  
+
   // Convert a base64-encoded string to byte-array
   // REF: https://tools.ietf.org/html/rfc4648
-  function ByteArray_fromBase64(_s) {
+  function ByteArray_fromBase64(_s as String) as ByteArray {
     // NOTE: Base64 = 6-bits/elmt <-> ByteArray = 8-bits/elmt
     //   CB:          8 elmts     (48 bits)       6 elmts
     var ac = _s.toCharArray();

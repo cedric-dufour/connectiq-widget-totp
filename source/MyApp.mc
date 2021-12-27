@@ -16,22 +16,24 @@
 // SPDX-License-Identifier: GPL-3.0
 // License-Filename: LICENSE/GPL-3.0.txt
 
+import Toybox.Lang;
 using Toybox.Application as App;
 using Toybox.Cryptography as Crypto;
 using Toybox.System as Sys;
 using Toybox.Timer;
+using Toybox.WatchUi as Ui;
 
 //
 // GLOBALS
 //
 
 // Current account and code
-var iMyCurrentTotpAccount = null;
-var dictMyCurrentTotpAccount = null;
-var arrMyCurrentTotpCode = null;
+var iMyCurrentTotpAccount as Number?;
+var dictMyCurrentTotpAccount as Dictionary<String>?;
+var arrMyCurrentTotpCode as Array?;
 
 // Current view
-var oMyView = null;
+var oMyView as MyView?;
 
 
 //
@@ -53,7 +55,7 @@ class MyApp extends App.AppBase {
   //
 
   // UI update time
-  private var oUpdateTimer;
+  private var oUpdateTimer as Timer.Timer?;
 
 
   //
@@ -62,42 +64,46 @@ class MyApp extends App.AppBase {
 
   function initialize() {
     AppBase.initialize();
-
-    // UI update time
-    self.oUpdateTimer = null;
   }
 
   function onStart(state) {
     //Sys.println("DEBUG: MyApp.onStart()");
 
     // DEBUG
+    // var dictAccount;
     // // oathtool --totp=sha1 --digits=6 --base32 5B5E7MMX344QRHYO
-    // App.Storage.setValue("ACT99",
-    //                      { "ID" => "Google",
-    //                          "K" => "5B5E7MMX344QRHYO",
-    //                          "E" => MyAlgorithms.ENCODING_BASE32,
-    //                          "D" => 6,
-    //                          "H" => Crypto.HASH_SHA1,
-    //                          "T0" => 0l,
-    //                          "TX" => 30 });
+    // dictAccount = {
+    //   "ID" => "Google",
+    //   "K" => "5B5E7MMX344QRHYO",
+    //   "E" => MyAlgorithms.ENCODING_BASE32,
+    //   "D" => 6,
+    //   "H" => Crypto.HASH_SHA1,
+    //   "T0" => 0l,
+    //   "TX" => 30
+    // } as Dictionary<String>?;
+    // App.Storage.setValue("ACT99", dictAccount as App.PropertyValueType);
     // // oathtool --totp=sha1 --digits=8 3132333435363738393031323334353637383930
-    // App.Storage.setValue("ACT98",
-    //                      { "ID" => "SHA1",
-    //                          "K" => "3132333435363738393031323334353637383930",
-    //                          "E" => MyAlgorithms.ENCODING_HEX,
-    //                          "D" => 8,
-    //                          "H" => Crypto.HASH_SHA1,
-    //                          "T0" => 0l,
-    //                          "TX" => 30 });
+    // dictAccount = {
+    //   "ID" => "SHA1",
+    //    "K" => "3132333435363738393031323334353637383930",
+    //    "E" => MyAlgorithms.ENCODING_HEX,
+    //    "D" => 8,
+    //    "H" => Crypto.HASH_SHA1,
+    //    "T0" => 0l,
+    //    "TX" => 30
+    // } as Dictionary<String>?;
+    // App.Storage.setValue("ACT98", dictAccount as App.PropertyValueType);
     // // oathtool --totp=sha256 --digits=8 3132333435363738393031323334353637383930313233343536373839303132
-    // App.Storage.setValue("ACT97",
-    //                      { "ID" => "SHA256",
-    //                          "K" => "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA",
-    //                          "E" => MyAlgorithms.ENCODING_BASE32,
-    //                          "D" => 8,
-    //                          "H" => Crypto.HASH_SHA256,
-    //                          "T0" => 0l,
-    //                          "TX" => 30 } );
+    // dictAccount = {
+    //   "ID" => "SHA256",
+    //   "K" => "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA",
+    //   "E" => MyAlgorithms.ENCODING_BASE32,
+    //   "D" => 8,
+    //   "H" => Crypto.HASH_SHA256,
+    //   "T0" => 0l,
+    //   "TX" => 30
+    // } as Dictionary<String>?;
+    // App.Storage.setValue("ACT97", dictAccount as App.PropertyValueType);
   }
 
   function onStop(state) {
@@ -105,7 +111,7 @@ class MyApp extends App.AppBase {
 
     // Stop UI update timer
     if(self.oUpdateTimer != null) {
-      self.oUpdateTimer.stop();
+      (self.oUpdateTimer as Timer.Timer).stop();
       self.oUpdateTimer = null;
     }
   }
@@ -113,31 +119,32 @@ class MyApp extends App.AppBase {
   function getInitialView() {
     //Sys.println("DEBUG: MyApp.getInitialView()");
 
-    return [new MyView(), new MyViewDelegate()];
+    return [new MyView(), new MyViewDelegate()] as Array<Ui.Views or Ui.InputDelegates>;
   }
 
   function onSettingsChanged() {
     //Sys.println("DEBUG: MyApp.onSettingsChanged()");
 
     // Import account
-    if (App.Properties.getValue("importAccountName").length() > 0 and App.Properties.getValue("importAccountKey").length() > 0) {
+    if ((App.Properties.getValue("importAccountName") as String).length() > 0
+        and (App.Properties.getValue("importAccountKey") as String).length() > 0) {
       // ... store account
       var dictAccount = {
-        "ID" => App.Properties.getValue("importAccountName"),
-        "K" => App.Properties.getValue("importAccountKey"),
-        "E" => App.Properties.getValue("importAccountEncoding").toNumber(),
-        "D" => App.Properties.getValue("importAccountDigits").toNumber(),
-        "H" => App.Properties.getValue("importAccountHash").toNumber(),
-        "T0" => App.Properties.getValue("importAccountT0").toLong(),
-        "TX" => App.Properties.getValue("importAccountTX").toNumber()
+        "ID" => App.Properties.getValue("importAccountName") as String,
+        "K" => App.Properties.getValue("importAccountKey") as String,
+        "E" => (App.Properties.getValue("importAccountEncoding") as Number).toNumber(),
+        "D" => (App.Properties.getValue("importAccountDigits") as Number).toNumber(),
+        "H" => (App.Properties.getValue("importAccountHash") as Number).toNumber(),
+        "T0" => (App.Properties.getValue("importAccountT0") as Number or Long).toLong(),
+        "TX" => (App.Properties.getValue("importAccountTX") as Number).toNumber()
       };
-      var s = App.Properties.getValue("importAccountSlot").format("%02d");
-      App.Storage.setValue(Lang.format("ACT$1$", [s]), dictAccount);
+      var s = (App.Properties.getValue("importAccountSlot") as Number).format("%02d");
+      App.Storage.setValue(format("ACT$1$", [s]), dictAccount as App.PropertyValueType);
 
       // ... reset import properties/settings
-      App.Properties.setValue("importAccountSlot", 0);
-      App.Properties.setValue("importAccountName", "");
-      App.Properties.setValue("importAccountKey", "");
+      App.Properties.setValue("importAccountSlot", 0 as App.PropertyValueType);
+      App.Properties.setValue("importAccountName", "" as App.PropertyValueType);
+      App.Properties.setValue("importAccountKey", "" as App.PropertyValueType);
     }
   }
 
@@ -146,34 +153,34 @@ class MyApp extends App.AppBase {
   // FUNCTIONS: self
   //
 
-  function updateApp() {
+  function updateApp() as Void {
     //Sys.println("DEBUG: MyApp.updateApp()");
 
     // Update UI
     self.updateUi();
   }
 
-  function updateUi() {
+  function updateUi() as Void {
     //Sys.println("DEBUG: MyApp.updateUi()");
 
     // Update UI
     if($.oMyView != null) {
-      $.oMyView.updateUi();
+        ($.oMyView as MyView).updateUi();
     }
   }
 
-  function startTimer() {
+  function startTimer() as Void {
     //Sys.println("DEBUG: MyApp.startTimer()");
 
     // (Re-)Start the compute timer (delay 1 second)
     if(self.oUpdateTimer != null) {
-      self.oUpdateTimer.stop();
+      (self.oUpdateTimer as Timer.Timer).stop();
     }
     self.oUpdateTimer = new Timer.Timer();
-    self.oUpdateTimer.start(method(:onComputeTimer), 1000, false);
+    (self.oUpdateTimer as Timer.Timer).start(method(:onComputeTimer), 1000, false);
   }
 
-  function onComputeTimer() {
+  function onComputeTimer() as Void {
     //Sys.println("DEBUG: MyApp.onComputeTimer()");
 
     // Compute TOTP code
@@ -186,39 +193,46 @@ class MyApp extends App.AppBase {
 
     // Start the UI update timer (every 1 second)
     self.oUpdateTimer = new Timer.Timer();
-    self.oUpdateTimer.start(method(:onUpdateTimer), 1000, true);
+    (self.oUpdateTimer as Timer.Timer).start(method(:onUpdateTimer), 1000, true);
   }
 
-  function onUpdateTimer() {
+  function onUpdateTimer() as Void {
     //Sys.println("DEBUG: MyApp.onUpdateTimer()");
     self.updateUi();
   }
 
-  function stopTimer() {
+  function stopTimer() as Void {
     //Sys.println("DEBUG: MyApp.stopTimer()");
 
     // Stop timer
     if(self.oUpdateTimer != null) {
-      self.oUpdateTimer.stop();
+      (self.oUpdateTimer as Timer.Timer).stop();
     }
     self.oUpdateTimer = null;
   }
 
-  function computeTOTP() {
+  function computeTOTP() as Void {
     //Sys.println("DEBUG: MyApp.computeTOTP()");
 
     // Compute TOTP code
     if($.dictMyCurrentTotpAccount != null) {
       var iNow = Time.now().value();
+      var dictAccount = $.dictMyCurrentTotpAccount as Dictionary<String>;
 
       // ... counter
-      var amCounter = MyAlgorithms.TOTP_Counter(iNow, $.dictMyCurrentTotpAccount["T0"], $.dictMyCurrentTotpAccount["TX"]);
+      var amCounter = MyAlgorithms.TOTP_Counter(iNow.toLong(),
+                                                dictAccount["T0"] as Long,
+                                                dictAccount["TX"] as Number);
 
       // ... code
-      var baK = MyAlgorithms.ByteArray_fromEncoding($.dictMyCurrentTotpAccount["K"], $.dictMyCurrentTotpAccount["E"]);
-      $.arrMyCurrentTotpCode = [ MyAlgorithms.HOTP_Code($.dictMyCurrentTotpAccount["D"], baK, amCounter[0], $.dictMyCurrentTotpAccount["H"]),
-                                iNow + amCounter[2] - $.dictMyCurrentTotpAccount["TX"],
-                                iNow + amCounter[2] ];
+      var baK = MyAlgorithms.ByteArray_fromEncoding(dictAccount["K"] as String,
+                                                    dictAccount["E"] as Number);
+      $.arrMyCurrentTotpCode = [MyAlgorithms.HOTP_Code(dictAccount["D"] as Number,
+                                                       baK,
+                                                       amCounter[0] as ByteArray,
+                                                       dictAccount["H"] as Number),
+                                iNow + amCounter[2] - (dictAccount["TX"] as Number),
+                                iNow + amCounter[2]];
     }
   }
 
