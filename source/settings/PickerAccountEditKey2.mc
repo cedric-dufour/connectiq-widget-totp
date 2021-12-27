@@ -1,7 +1,7 @@
 // -*- mode:java; tab-width:2; c-basic-offset:2; intent-tabs-mode:nil; -*- ex: set tabstop=2 expandtab:
 
 // TOTP (Garmin ConnectIQ) Widget (TOTP)
-// Copyright (C) 2018 Cedric Dufour <http://cedric.dufour.name>
+// Copyright (C) 2018-2021 Cedric Dufour <http://cedric.dufour.name>
 //
 // TOTP (Garmin ConnectIQ) Widget (TOTP) is free software:
 // you can redistribute it and/or modify it under the terms of the GNU General

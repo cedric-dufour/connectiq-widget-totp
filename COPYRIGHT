@@ -1,6 +1,6 @@
 TOTP (Garmin ConnectIQ) Widget
 ==============================
-Copyright (C) 2018 Cedric Dufour <http://cedric.dufour.name>
+Copyright (C) 2018-2021 Cedric Dufour <http://cedric.dufour.name>
 
 TOTP (Garmin ConnectIQ) Widget (TOTP) is free software:
 you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,4 +17,3 @@ following mention in their preamble: "TOTP (Garmin ConnectIQ) Widget (TOTP)"
 
 SPDX-License-Identifier: GPL-3.0
 License-Filename: LICENSE/GPL-3.0.txt
-

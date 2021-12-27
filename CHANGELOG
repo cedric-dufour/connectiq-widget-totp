@@ -1,7 +1,10 @@
+* 1.0.20211227a:
+  - Added all supported 240x240, 260x260 and 280x280 round devices
+  - CHG: Allow "Key (cont)" to grow key to more than 62 characters
+
 * 1.0.20190127c:
   - FIX: memory slot 0 could not be reached from memory slot 99
   - NEW: allow accounts to be created via Garmin Connect Mobile (GCM)
 
 * 1.0.20181224a:
   - Post Tenebras Lux (and Merry Christmas)
-
